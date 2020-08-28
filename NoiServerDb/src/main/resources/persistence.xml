@@ -1,0 +1,7 @@
+
+<properties>
+<property name="javax.persistence.query.timeout" value="-2"/>
+	<property name="hibernate.show_sql" value="true"/>
+	<property name="hibernate.format_sql" value="true"/>
+	<property name="hibernate.use_sql_comments" value="true"/>
+</properties>

@@ -1,0 +1,3 @@
+<property name="show_sql">true</property>
+<property name="format_sql">true</property>
+<property name="use_sql_comments">true</property>
