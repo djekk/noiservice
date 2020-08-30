@@ -243,6 +243,9 @@
     <ClInclude Include="baselib\include\mbedtls\xtea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UiFields.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NoiService.cpp">
@@ -255,6 +258,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WebPageDownloader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UiFields.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

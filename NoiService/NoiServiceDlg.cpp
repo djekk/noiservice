@@ -7,6 +7,7 @@
 #include "NoiServiceDlg.h"
 #include "afxdialogex.h"
 #include "WebPageDownloader.h"
+#include "UiFields.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -50,15 +51,27 @@ END_MESSAGE_MAP()
 #define GET_INQUIRY           132
 #define SET_RESULT            131
 #define WORKING_ON_RESULT     130
+#define VALIDATION_SERVICE    134
+
+#define DELAY_FOR_TIMER		5000
 
 const CString _ID = _T("id");
 const CString _ERROR = _T("error");
 const CString _RESULT = _T("result");
+const CString _OWNER = _T("owner");
+
+const static CString PUT = _T("PUT");
+const static CString POST = _T("POST");
 
 CNoiServiceDlg::CNoiServiceDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CNoiServiceDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}
+
+CNoiServiceDlg::~CNoiServiceDlg()
+{
+	
 }
 
 void CNoiServiceDlg::DoDataExchange(CDataExchange* pDX)
@@ -74,6 +87,8 @@ BEGIN_MESSAGE_MAP(CNoiServiceDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK2, &CNoiServiceDlg::OnBnClickedSetResult)
 	ON_WM_TIMER()
 	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDOK3, &CNoiServiceDlg::OnBnClickedStart)
+	ON_BN_CLICKED(IDOK4, &CNoiServiceDlg::OnBnClickedStop)
 END_MESSAGE_MAP()
 
 
@@ -103,18 +118,23 @@ BOOL CNoiServiceDlg::OnInitDialog()
 		}
 	}
 
-	GetDlgItem(IDC_EDIT_SERVER)->SetWindowText(_T("http://localhost:8080/"));
+	CUiFields::InitUiFiels(this);
 		
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// TODO: Add extra initialization here
-	StartTimer(GET_INQUIRY);
+	CUiFields::ValidateUiFields(this);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
+
+void CNoiServiceDlg::OnDestroy()
+{
+	CUiFields::SaveProfileProperty(this);
+}
+
 
 void CNoiServiceDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
@@ -198,29 +218,23 @@ void CNoiServiceDlg::resolveJSON(CString response)
 	}
 }
 
-CString CNoiServiceDlg::GetServer()
-{
-	CString sServer;
-	GetDlgItem(IDC_EDIT_SERVER)->GetWindowText(sServer);
-
-	if (sServer.IsEmpty())
-	{
-		AfxMessageBox(_T("Please enter host"));
-		return "";
-	}
-
-	return sServer;
-}
 
 void CNoiServiceDlg::OnBnClickedGetInquiry()
 {
-	CString sFullUrl = GetServer() + "/getInquiry";
+	CString sFullUrl = CUiFields::GetServer(this) + "/getInquiry";
 
 	CString sError;
 	CString sResponse;
 	m_StringMap.RemoveAll();
 
-	if (CWebPageDownloader::RestApi(_T("POST"), sFullUrl, "", sResponse, sError))
+	CString sOwner;
+	GetDlgItem(IDC_EDIT_OWNER)->GetWindowText(sOwner);
+
+	CString strFormData;
+	strFormData.Format(_T("{ \"%s\": \"%s\" }"), 
+		_OWNER, sOwner);
+
+	if (CWebPageDownloader::RestApi(POST, sFullUrl, strFormData, sResponse, sError))
 	{
 		resolveJSON(sResponse);
 		GetDlgItem(IDC_STATIC_RESSPONSE)->SetWindowText(sResponse);
@@ -233,22 +247,10 @@ void CNoiServiceDlg::OnBnClickedGetInquiry()
 	}
 }
 
-void CNoiServiceDlg::GetResponseItems(CString& sId, CString& sError)
-{
-	m_StringMap.Lookup(_ID, sId);
-	m_StringMap.Lookup(_ERROR, sError);
-}
-
-void CNoiServiceDlg::GetResponseItem(const CString sName, CString& sValue)
-{
-	m_StringMap.Lookup(sName, sValue);
-}
-
-
 
 void CNoiServiceDlg::OnBnClickedSetResult()
 {
-	CString sFullUrl = GetServer() + "/setResult";
+	CString sFullUrl = CUiFields::GetServer(this) + "/setResult";
 
 	CString sId;
 	GetResponseItem(_ID, sId);
@@ -267,12 +269,13 @@ void CNoiServiceDlg::OnBnClickedSetResult()
 	}
 
 	CString strRequest;
-	strRequest.Format(_T("{ \"id\": %s,\"result\" : \"%s\" }"), sId, sResult);
+	strRequest.Format(_T("{ \"%s\": %s,\"%s\" : \"%s\" }"),
+		_ID, sId, _RESULT, sResult);
 
 	CString sResponse;
 	CString sError;
 
-	if (CWebPageDownloader::RestApi(_T("PUT"), sFullUrl, strRequest, sResponse, sError))
+	if (CWebPageDownloader::RestApi(PUT, sFullUrl, strRequest, sResponse, sError))
 	{
 		resolveJSON(sResponse);
 		GetDlgItem(IDC_STATIC_RESSPONSE)->SetWindowText(sResponse);
@@ -282,6 +285,17 @@ void CNoiServiceDlg::OnBnClickedSetResult()
 		m_StringMap.SetAt(_ERROR, sError);
 		GetDlgItem(IDC_STATIC_RESSPONSE)->SetWindowText(sError);
 	}
+}
+
+void CNoiServiceDlg::GetResponseItems(CString& sId, CString& sError)
+{
+	m_StringMap.Lookup(_ID, sId);
+	m_StringMap.Lookup(_ERROR, sError);
+}
+
+void CNoiServiceDlg::GetResponseItem(const CString sName, CString& sValue)
+{
+	m_StringMap.Lookup(sName, sValue);
 }
 
 void CNoiServiceDlg::StartTimer(int nID)
@@ -299,6 +313,12 @@ void CNoiServiceDlg::Processing()
 
 void CNoiServiceDlg::OnTimer(UINT nIDEvent)
 {
+	if (!CUiFields::ValidateUiFields(this))
+	{
+		OnBnClickedStop();
+		return;
+	}
+
 	switch (nIDEvent)
 	{		
 		case GET_INQUIRY:
@@ -312,11 +332,13 @@ void CNoiServiceDlg::OnTimer(UINT nIDEvent)
 			{
 				KillTimer(GET_INQUIRY);
 				StartTimer(WORKING_ON_RESULT);
+				SetTimer(WORKING_ON_RESULT, DELAY_FOR_TIMER, NULL);
 			}
 			else if (!sError.IsEmpty())
 			{
-				KillTimer(GET_INQUIRY);
+				KillTimer(GET_INQUIRY);				
 				StartTimer(GET_INQUIRY);
+				SetTimer(GET_INQUIRY, DELAY_FOR_TIMER, NULL);
 			}
 		}
 		break;
@@ -326,8 +348,9 @@ void CNoiServiceDlg::OnTimer(UINT nIDEvent)
 			
 			Processing();
 
-			KillTimer(WORKING_ON_RESULT);
+			KillTimer(WORKING_ON_RESULT);			
 			StartTimer(SET_RESULT);
+			SetTimer(SET_RESULT, DELAY_FOR_TIMER, NULL);
 		}
 		break;
 
@@ -335,12 +358,30 @@ void CNoiServiceDlg::OnTimer(UINT nIDEvent)
 		{				
 			OnBnClickedSetResult();
 
-			KillTimer(SET_RESULT);
+			KillTimer(SET_RESULT);			
 			StartTimer(GET_INQUIRY);
+			SetTimer(GET_INQUIRY, DELAY_FOR_TIMER, NULL);
 		}
 		break;
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
 
+}
+
+void CNoiServiceDlg::OnBnClickedStart()
+{
+	if (!CUiFields::ValidateUiFields(this))
+		return;
+
+	GetDlgItem(IDC_STATIC_RESSPONSE)->SetWindowText(_T("Start"));
+	StartTimer(GET_INQUIRY);
+}
+
+void CNoiServiceDlg::OnBnClickedStop()
+{
+	GetDlgItem(IDC_STATIC_RESSPONSE)->SetWindowText(_T("Stop"));
+	KillTimer(GET_INQUIRY);
+	KillTimer(WORKING_ON_RESULT);
+	KillTimer(SET_RESULT);
 }

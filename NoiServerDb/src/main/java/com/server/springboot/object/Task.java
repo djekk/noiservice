@@ -48,6 +48,9 @@ public class Task
 	@Column(name="result")
 	private String result;
 	
+	@Column(name="owner")
+	private String owner;
+	
 	@Column(name="state")
 	private String state;
 	
@@ -97,6 +100,16 @@ public class Task
 	public String getState()
 	{
 		return state;
+	}
+	
+	public void setOwner(String owner)
+	{
+		this.owner = owner;
+	}
+	
+	public String getOwner()
+	{
+		return owner;
 	}
 	
 	// other getters and setters...

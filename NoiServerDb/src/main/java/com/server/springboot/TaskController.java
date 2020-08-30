@@ -44,6 +44,7 @@ CREATE TABLE task (
   taskid Integer NOT NULL,
   inquiry VARCHAR(500) NOT NULL,
   result VARCHAR(500),
+  owner VARCHAR(100),
   state VARCHAR(20) NOT NULL,
   lastupdated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -141,6 +142,7 @@ public class TaskController
 			task.setState(TaskStateMachine.NEW);
 			task.setLastUpdated(new Timestamp(System.currentTimeMillis()));
 			task.setResult(null);
+			task.setOwner(null);
 			service.save(task);
 			return new ResponseEntity<Task>(task, HttpStatus.OK);
 		} catch (NoSuchElementException e) {
@@ -150,10 +152,15 @@ public class TaskController
 	
 	// RESTful API method for read operation
 	@PostMapping("/getInquiry")
-	public ResponseEntity<Task> getInquiry() {
+	public ResponseEntity<Task> getInquiry(@RequestBody Task intask) {
 		try {
-			Task task = service.getInquiryLock();
-			return new ResponseEntity<Task>(task, HttpStatus.OK);
+			if(intask != null && intask.getOwner() != null)
+			{
+				Task task = service.getInquiryLock(intask.getOwner());
+				return new ResponseEntity<Task>(task, HttpStatus.OK);
+			}
+			return new ResponseEntity<Task>(HttpStatus.NOT_FOUND);
+			
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<Task>(HttpStatus.NOT_FOUND);
 		}

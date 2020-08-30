@@ -11,17 +11,16 @@ class CNoiServiceDlg : public CDialogEx
 // Construction
 public:
 	CNoiServiceDlg(CWnd* pParent = NULL);	// standard constructor
+	~CNoiServiceDlg();
 
 // Dialog Data
 	enum { IDD = IDD_NOISERVICE_DIALOG };
 	CMapStringToString m_StringMap;
 	void resolveJSON(CString response);
-	CString GetServer();
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
-
-
+	
 // Implementation
 protected:
 	HICON m_hIcon;
@@ -37,6 +36,7 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 
 public:
@@ -45,4 +45,6 @@ public:
 
 	void Processing();
 	
+	afx_msg void OnBnClickedStart();
+	afx_msg void OnBnClickedStop();
 };

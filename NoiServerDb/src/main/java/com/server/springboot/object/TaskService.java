@@ -45,10 +45,11 @@ public class TaskService
 		return repo.findByCustomerAndtaskId(customer, taskid);
 	}
 	
-	public Task getInquiryLock()
+	public Task getInquiryLock(String owner)
 	{
 		Task task = repo.getInquiryLock();
 		task.setState(TaskStateMachine.IN_PROGRESS);
+		task.setOwner(owner);
 		task.setLastUpdated(new Timestamp(System.currentTimeMillis()));
 		save(task);
 		
