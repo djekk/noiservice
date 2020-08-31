@@ -1,4 +1,4 @@
-package com.server.NoiServerDB;
+package com.server.springboot;
 
 /*
  * Copyright 2001-2020 by HireRight, Inc. All rights reserved.
@@ -6,15 +6,13 @@ package com.server.NoiServerDB;
  * of HireRight, Inc. Use is subject to license terms.
  */
 
-import com.server.springboot.Application;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = Application.class)
-class NoiServerDBApplicationTests {
+import static org.junit.jupiter.api.Assertions.*;
 
+class TaskControllerTest
+{
 	@Test
 	void contextLoads() {
 	}
-
 }

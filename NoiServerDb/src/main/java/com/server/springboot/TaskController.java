@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
 //https://www.codejava.net/frameworks/spring-boot/spring-boot-restful-crud-api-examples-with-mysql-database
 
 //https://blog.netgloo.com/2014/10/27/using-mysql-in-spring-boot-via-spring-data-jpa-and-hibernate/
-
+// depl https://www.hetzner.com/
 
 //https://www.guru99.com/postgresql-create-database.html
 
