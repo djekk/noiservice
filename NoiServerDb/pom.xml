@@ -18,7 +18,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<start-class>com.server.NoiServerDB.NoiServerDBApplication</start-class>
+		<start-class>com.server.springboot.NoiServerDBApplication</start-class>
 	</properties>
 
 	<dependencies>

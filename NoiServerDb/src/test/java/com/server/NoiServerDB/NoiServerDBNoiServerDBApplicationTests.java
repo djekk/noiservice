@@ -6,12 +6,13 @@ package com.server.NoiServerDB;
  * of HireRight, Inc. Use is subject to license terms.
  */
 
-import com.server.springboot.Application;
+import com.server.springboot.NoiServerDBApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = Application.class)
-class NoiServerDBApplicationTests {
+@SpringBootTest(classes = NoiServerDBApplication.class)
+class NoiServerDBNoiServerDBApplicationTests
+{
 
 	@Test
 	void contextLoads() {
