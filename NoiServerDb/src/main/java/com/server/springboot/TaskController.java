@@ -20,22 +20,10 @@ import org.springframework.web.bind.annotation.*;
  * of HireRight, Inc. Use is subject to license terms.
  */
 
-//postgresql
-//pgAdmin on windows
-//http://127.0.0.1:61110/browser/
+/*
+1 .install postgre
 
-//https://app.diagrams.net/
-//https://github.com/lankydan/spring-boot-post-tutorial/blob/master/spring-boot-rest-tutorial/src/main/java/lankydan/tutorial/springboot/PersonRestController.java
-//https://www.codejava.net/frameworks/spring-boot/spring-boot-restful-crud-api-examples-with-mysql-database
-
-//https://blog.netgloo.com/2014/10/27/using-mysql-in-spring-boot-via-spring-data-jpa-and-hibernate/
-// depl https://www.hetzner.com/
-
-//https://www.guru99.com/postgresql-create-database.html
-
- /*
-postgre
-
+2. create table
 
 DROP TABLE task;
 CREATE TABLE task (
@@ -56,7 +44,33 @@ CREATE SEQUENCE task_id_seq START 1;
 insert into task (id, customer, taskid, inquiry, state) values (nextval('task_id_seq'), 'customer1', 1, 'dfg', 'NEW');
 select * from task;
 
+3. create noiadmin
+		
+		
+		CREATE ROLE noiadmin WITH
+		LOGIN
+		SUPERUSER
+		INHERIT
+		CREATEDB
+		CREATEROLE
+		NOREPLICATION
+		ENCRYPTED PASSWORD 'SCRAM-SHA-256$4096:1p4djwLVoqVhdTgc16WjFw==$F691KAQtY2DE0c7eJKGD6YRBGUdXjIJA2Gw5RFI8o9Y=:izMQYMvLVVM4ikFBBi8qNwLcy1t+Z1HqI+S+V0K4f8o=';
 */
+//postgresql
+//pgAdmin on windows
+//http://127.0.0.1:61110/browser/
+
+//https://app.diagrams.net/
+//https://github.com/lankydan/spring-boot-post-tutorial/blob/master/spring-boot-rest-tutorial/src/main/java/lankydan/tutorial/springboot/PersonRestController.java
+//https://www.codejava.net/frameworks/spring-boot/spring-boot-restful-crud-api-examples-with-mysql-database
+
+//https://blog.netgloo.com/2014/10/27/using-mysql-in-spring-boot-via-spring-data-jpa-and-hibernate/
+// depl https://www.hetzner.com/
+
+//https://www.guru99.com/postgresql-create-database.html
+
+ /*
+
  
  //https://www.baeldung.com/exception-handling-for-rest-with-spring/
 //https://stackabuse.com/monitoring-spring-boot-apps-with-micrometer-prometheus-and-grafana/
