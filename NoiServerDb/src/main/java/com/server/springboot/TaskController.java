@@ -144,6 +144,12 @@ public class TaskController
 	*/
 	
 	// RESTful API method for Create operation
+	
+	/*
+	 * Eduard kidaet v bazu rabotu
+		http://localhost:8080/setInquiry  POST
+		Body zaporsa: {"customer":"jfghfjghhj","taskid":2,"inquiry":"xfgxfgxfgfgdfgd"}
+	 */
 	@PostMapping("/setInquiry")
 	public ResponseEntity<Task> setInquiry(@RequestBody Task task) {
 		
@@ -164,6 +170,13 @@ public class TaskController
 		}
 	}
 	
+	/*
+	 c++ zabiraet rabotu s server
+	POST
+	http://localhost:8080/getInquiry
+	Body zaporosa: {"owner":"owner"}   otsilaet 4to 
+	 */
+	
 	// RESTful API method for read operation
 	@PostMapping("/getInquiry")
 	public ResponseEntity<Task> getInquiry(@RequestBody Task intask) {
@@ -181,6 +194,12 @@ public class TaskController
 		
 	}
 	
+	/*
+	c++ kidaet proshitanij result
+	http://localhost:8080/setResult
+	PUT
+	Body zaporosa: {"id":3, "result":"hgj"}
+	*/
 	// RESTful API method for Update operation
 	@PutMapping("/setResult")
 	public ResponseEntity<Task> setResult(@RequestBody Task task) {
@@ -195,7 +214,12 @@ public class TaskController
 			return new ResponseEntity<Task>(HttpStatus.NOT_FOUND);
 		}
 	}
-	
+	/*
+	Eduard poluchaet tak result s bazi dannih sdelanij c++
+	http://localhost:8080/getResult
+	POST
+	Body zaporsa:{"customer":"customer1","taskid":1}
+	*/
 	@PostMapping("/getResult")
 	public ResponseEntity<Task> getResult(@RequestBody Task task) {
 		try {
